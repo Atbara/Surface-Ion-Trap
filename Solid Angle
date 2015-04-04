@@ -1,0 +1,8 @@
+The solid angle
+
+SolAngle[X1_, X2_, Y1_, Y2_, Xp_, Yp_, zp_] := 
+  ArcTan[((X2 - Xp)*(Y2 - Yp))/(zp*Sqrt[(X2 - Xp)^2 + (Y2 - Yp)^2 + zp^2])] - 
+   ArcTan[((X1 - Xp)*(Y2 - Yp))/(zp*Sqrt[(X1 - Xp)^2 + (Y2 - Yp)^2 + zp^2])] -
+    ArcTan[((X2 - Xp)*(Y1 - Yp))/(
+    zp*Sqrt[(X2 - Xp)^2 + (Y1 - Yp)^2 + zp^2])] + 
+   ArcTan[((X1 - Xp)*(Y1 - Yp))/(zp*Sqrt[(X1 - Xp)^2 + (Y1 - Yp)^2 + zp^2])];
