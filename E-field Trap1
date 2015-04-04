@@ -1,0 +1,224 @@
+(*Calculating the potential, electirc fields and the trapping frequencies for trap #1 *)
+
+(*------------- Rf-electrods inputs [Volt]: Trap #1*)
+  Vrf   = 70;
+  Vlt1 = -Vrf;
+  Vlt2 = +Vrf;
+  Vlt3 = -Vrf; 
+  Vlt4 = +Vrf;
+
+(*------------- DC-electrods inputs [Volts]: Trap #1*)
+  Vdc        = 1.0;
+  VdcUpLft    = -0.5*Vdc;
+  VdcUpRit    = -0.5*Vdc;
+
+  VdcRitAxe = -0.7*Vdc;
+  VdcRit = 0.25*Vdc;
+
+  VdcDwnLft = - 0.95*Vdc; 
+  VdcDwnRit = -0.95*Vdc;
+
+  VdcLftAxe = -0.7*Vdc;
+  VdcLft = 0.25*Vdc;
+
+  VdcCntr = 0.0*Vdc;
+
+(*=======================================================*)
+
+(*------------- Solid angle Rf(150\[Mu]m) for Trap #1 called from previous file*)
+RFLength = 150;
+x1 = 70; 
+x2 = x1 + RFLength; (*Trap dimensions for 150\[Mu]m*)
+y1 = 70; 
+y2 = y1 + RFLength;
+Tr1U150umRF[kX_, kY_, kZ_] = (1/(2 \[Pi])) (
+    (Vlt1)*(SolAngle[x1, x2, y1, y2, kX, kY, kZ]) -
+     (Vlt2)*(SolAngle[x1, x2, -y1, -y2, kX, kY, kZ]) +
+     (Vlt3)*(SolAngle[-x1, -x2, -y1, -y2, kX, kY, kZ]) -
+     (Vlt4)*(SolAngle[-x1, -x2, y1, y2, kX, kY, kZ]));
+
+(*=================================================*)
+(*--------------- Trap electric fields for trap #1 *)
+
+Tr1EX150umRF[kX_, kY_, kZ_] =  D[Tr1U150umRF[kX, kY, kZ], kX]; (*x-component*)
+Tr1EY150umRF[kX_, kY_, kZ_] = D[Tr1U150umRF[kX, kY, kZ], kY]; (* y-component*)
+Tr1EZ150umRF[kX_, kY_, kZ_] = D[Tr1U150umRF[kX, kY, kZ], kZ]; (*z-component*)
+(*|E|= Sqrt[Subscript[E, x]^2+Subscript[E, y]^2+Subscript[E, z]^2], total field*)
+
+Tr1ESQ150umRF[kX_, kY_, kZ_] = (Tr1EX150umRF[kX, kY, kZ])^2 + (Tr1EY150umRF[kX, kY, kZ])^2 + (Tr1EZ150umRF[ kX, kY, kZ])^2; 
+
+(*----------------------- Calculating the volume of stability for trap #1 *)
+Tr1EtaX[kX_, kY_, kZ_] = ((2*echarge)/(M*\[CapitalOmega]^2))*Abs[D[Sqrt[Tr1EX150umRF[kX, kY, kZ]], kX]*c1^2];
+Tr1EtaY[kX_, kY_, kZ_] = ((2*echarge)/(M*\[CapitalOmega]^2))*Abs[D[Sqrt[Tr1EY150umRF[kX, kY, kZ]], kX]*c1^2];
+Tr1EtaZ[kX_, kY_, kZ_] = ((2*echarge)/(M*\[CapitalOmega]^2))*Abs[D[Sqrt[Tr1EZ150umRF[kX, kY, kZ]], kX]*c1^2];
+
+Tr1EtaTot[kX_, kY_, kZ_] = 
+    ((2*echarge)/(M*\[CapitalOmega]^2))*((D[Tr1EX150umRF[kX, kY, kZ], kX]*c1^2)^2 + 
+    (D[Tr1EX150umRF[kX, kY, kZ], kY]*c1^2)^2 + (D[Tr1EX150umRF[kX, kY, kZ], kZ]*c1^2)^2)^(1/2);
+    
+Tr1EtaT[kX_, kY_, kZ_] = Sqrt[Tr1EtaX[kX, kY, kZ]^2 + Tr1EtaX[kX, kY, kZ]^2 + Tr1EtaX[kX, kY, kZ]^2];
+
+(*=============================================*)
+(*------------- Solid angles for the DC electrods of trap #1 *)
+gap = 10;
+(*Coordinates of the center DC-electrod: trap #1 *)
+
+  x1DCCntrTr1 = -x1 + gap;  (*x-axis*)
+  x2DCCntrTr1 = x1 - gap;
+
+  y1DCCntrTr1 = -y1 + gap;
+  y2DCCntrTr1 = y1 - gap;
+(*-------------*)
+
+(*Coordinates of the * Floating wire: trap #1 *)
+  FWireWidth = 10; 
+  x1FWire = -FWireWidth /2;  
+  x2FWire = FWireWidth /2;
+  y1FWire = -y1 + gap;
+  FWireLength = 500;
+  y2FWire = -FWireLength;
+(*-------------*)
+
+(*Coordinates of the Upper side DC-electrod: trap #1 *)
+  x1DCUpATr1 = -x1 + gap;  
+  x2DCUpATr1 = -(gap/2);  (*x-axis*)
+  y1DCUpATr1 = y1;  
+  y2DCUpATr1 = y2;        (*y-axis*)
+
+  x1DCUpBTr1 = gap/2;
+  x2DCUpBTr1 = x1 - gap;
+  y1DCUpBTr1 = y1;
+  y2DCUpBTr1 = y2;
+(*-------------*)
+
+(*Coordinates of the Right side DC-electrod: trap #1 *)
+  AxeLength = 50;
+  x1DCRitAxeTr1 = x1;  
+  x2DCRitAxeTr1 = x1 + AxeLength;
+  y1DCRitAxeTr1 = -y1 + gap; 
+  y2DCRitAxeTr1 = y1 - gap;
+
+  AxeCnctWidth = 10;
+  x1DCRitAxeCnctTr1 = x2DCRitAxeTr1;  
+  x2DCRitAxeCnctTr1 = x2;
+  y1DCRitAxeCnctTr1 = y2DCCntrTr1 - AxeCnctWidth; 
+  y2DCRitAxeCnctTr1 = y2DCCntrTr1;
+
+  Axegap = 5; (*----------- Axe DC electrod support: trap #1 *)
+
+  x1DCRitTr1 = x2DCRitAxeTr1 + Axegap;  
+  x2DCRitTr1 = x2;
+  y1DCRitTr1 = y1DCRitAxeTr1;
+  y2DCRitTr1 = y1DCRitAxeCnctTr1 - Axegap;
+(*-------------*)
+
+(*Coordinates of the Down side DC-electrod: trap #1 *)
+
+  wirew = 5; (* The floating wire width*)
+  x1DCDwnATr1 = (wirew/2) + gap ;  
+  x2DCDwnATr1 = x2DCUpBTr1;(*x-axis*)
+  y1DCDwnATr1 = -y1DCUpATr1;  
+  y2DCDwnATr1 = -y2DCUpATr1;(*y-axis*)
+
+  x1DCDwnBTr1 = -((wirew/2) + gap);  
+  x2DCDwnBTr1 = x1DCUpATr1;
+  y1DCDwnBTr1 = -y1DCUpBTr1;  
+  y2DCDwnBTr1 = -y2DCUpBTr1;
+(*-------------*)
+
+(*Coordinates of the Left side DC-electrod: trap #1 *)
+
+  x1DCLftTr1 = -x1DCRitTr1 ;
+  x2DCLftTr1 = -x2DCRitTr1;
+
+  y1DCLftTr1 = y1DCRitTr1;
+  y2DCLftTr1 = y2DCRitTr1;
+
+(*Coordinates of the Right side DC-electrod: trap #1 *)
+
+  x1DCLftAxeTr1 = -x1DCRitAxeTr1;  
+  x2DCLftAxeTr1 = -x2DCRitAxeTr1;
+  y1DCLftAxeTr1 = -y1DCRitAxeTr1; 
+  y2DCLftAxeTr1 = -y2DCRitAxeTr1;
+
+  x1DCLftAxeCnctTr1 = -x1DCRitAxeCnctTr1;  
+  x2DCLftAxeCnctTr1 = -x2DCRitAxeCnctTr1;
+  y1DCLftAxeCnctTr1 = -y1DCRitAxeCnctTr1; 
+  y2DCLftAxeCnctTr1 = -y2DCRitAxeCnctTr1 ;
+
+			(*----------- Axe DC electrod support: trap #1 *)
+
+  x1DCLftTr1 = -x1DCRitTr1;  
+  x2DCLftTr1 = -x2DCRitTr1;
+  y1DCLftTr1 = -y1DCRitTr1;
+  y2DCLftTr1 = -y2DCRitTr1;
+(*-------------*)
+
+(*------------- Solid angle for all DC electrods: RF[150\[Mu]m], trap #1 *)
+
+Tr1U150umDC[kX_, kY_, kZ_] = (1/(2 \[Pi])) (
+      (VdcUpLft)* (SolAngle[x1DCUpATr1, x2DCUpATr1, y1DCUpATr1, y2DCUpATr1, kX, kY, kZ]) +
+      (VdcUpRit)*(SolAngle[x1DCUpBTr1, x2DCUpBTr1, y1DCUpBTr1, y2DCUpBTr1, kX, kY, kZ]) +
+      (VdcRitAxe)*((SolAngle[x1DCRitAxeTr1, x2DCRitAxeTr1, y1DCRitAxeTr1, y2DCRitAxeTr1, kX, kY, kZ]) +
+      (SolAngle[x1DCRitAxeCnctTr1, x2DCRitAxeCnctTr1, y1DCRitAxeCnctTr1, y2DCRitAxeCnctTr1, kX, kY, kZ])) +
+      (VdcRit)*(SolAngle[x1DCRitTr1, x2DCRitTr1, y1DCRitTr1, y2DCRitTr1, kX, kY, kZ]) -
+      (VdcDwnLft)*(SolAngle[x1DCDwnATr1, x2DCDwnATr1, y1DCDwnATr1, y2DCDwnATr1, kX, kY, kZ]) +
+      (VdcDwnRit)*(SolAngle[x1DCDwnBTr1, x2DCDwnBTr1, y1DCDwnBTr1, y2DCDwnBTr1, kX, kY, kZ]) +
+      (VdcLftAxe)*((SolAngle[x1DCLftAxeTr1, x2DCLftAxeTr1, y1DCLftAxeTr1, y2DCLftAxeTr1, kX, kY, kZ]) +
+      (SolAngle[x1DCLftAxeCnctTr1, x2DCLftAxeCnctTr1, y1DCLftAxeCnctTr1, y2DCLftAxeCnctTr1, kX, kY, kZ])) +
+      (VdcLft)*(SolAngle[x1DCLftTr1, x2DCLftTr1, y1DCLftTr1, y2DCLftTr1, kX, kY, kZ]) +
+      (VdcCntr)*(SolAngle[x1DCCntrTr1, x2DCCntrTr1, y1DCCntrTr1, y2DCCntrTr1, kX, kY, kZ]) -
+      (SolAngle[x1FWire, x2FWire, y1FWire, y2FWire, kX, kY, kZ]));
+
+(*========================================*)
+(*--------------- Trap electric fields of the DC electrods*)
+
+Tr1EX150umDC[kX_, kY_, kZ_] = D[Tr1U150umDC[kX, kY, kZ], kX]; (*x-component*)
+Tr1EY150umDC[kX_, kY_, kZ_] = D[Tr1U150umDC[kX, kY, kZ], kY]; (*y-component*)
+Tr1EZ150umDC[kX_, kY_, kZ_] = D[Tr1U150umDC[kX, kY, kZ], kZ]; (*z-component*)
+
+Tr1ESQ150umDC[kX_, kY_, kZ_] = (Tr1EX150umDC[kX, kY, kZ])^2 + (Tr1EY150umDC[kX, kY, kZ])^2 + (Tr1EZ150umDC[kX, kY, kZ])^2; 
+
+(*========================================*)
+(*------------------ Use the followings to calculate the total electric field of trap #1*)
+(*--------------- The total electric fields : DC electrods + Rf electrods: Trap #1 *)
+Tr1EX150umtot[kX_, kY_, kZ_] = Tr1EX150umDC[kX, kY, kZ] + Tr1EX150umRF[kX, kY, kZ];
+Tr1EY150umtot[kX_, kY_, kZ_] = Tr1EY150umDC[kX, kY, kZ] + Tr1EY150umRF[kX, kY, kZ];
+Tr1EZ150umtot[kX_, kY_, kZ_] = Tr1EZ150umDC[kX, kY, kZ] + Tr1EZ150umRF[kX, kY, kZ];
+(*Total field below*)
+Tr1ESQ150umtot[kX_, kY_, kZ_] = (Tr1EX150umtot[kX, kY, kZ])^2 +c(Tr1EY150umtot[kX, kY, kZ])^2 +c(Tr1EZ150umtot[kX, kY, kZ])^2; 
+
+(*==========================================*)
+(*---------------- Calculate the total potnetial trap #1: Overscript[U, \[RightVector]](r) = Subscript[U, srf](r)+Subscript[U, sdc](r)\[Rule] Rf(150\[Mu]m)*)
+
+(*--------------- Trap electric pseudopotential*)
+  M = 40*1.67262178*10^-27; (*1.67262178*10^-27 is the mass of the proton*)
+  echarge = 1.6*10^-19;
+  \[CapitalOmega] = 2*\[Pi]*50*10^6;
+  c1 = 10^6;(*converting unit from \[Mu]m to m*)
+  Tr1Upsd150umRF[kX_, kY_, kZ_] = (1/(M*echarge ))*(echarge/(2*\[CapitalOmega]))^2*c1^2* Tr1ESQ150umRF[kX, kY, kZ];
+  
+(*---------------- Calculate the total potnetial: Overscript[U, \
+\[RightVector]](r) = Subscript[U, srf](r)+Subscript[U, sdc](r)\[Rule] Rf(75\[Mu]m)*)
+Tr1Utot150um[kX_, kY_, kZ_] = Tr1Upsd150umRF[kX, kY, kZ] + Tr1U150umDC[kX, kY, kZ];
+
+(*========================================*)
+(*----------------The Trapping frequencies for trap #1*)
+(*--------------  The Trapping frequencies for the RF electrodes*)
+
+  Tr1fX150umRF[kX_, kY_, kZ_] = (echarge /(2*\[Pi]*M*\[CapitalOmega]))*Sqrt[D[c1^2*Tr1ESQ150umRF[kX, kY, kZ], {kX, 2}]*c1^2];
+  Tr1fY150umRF[kX_, kY_, kZ_] = (echarge/(2*\[Pi]*M*\[CapitalOmega]))*Sqrt[D[c1^2*Tr1ESQ150umRF[kX, kY, kZ], {kY, 2}]*(c1^2) ];
+  Tr1fZ150umRF[kX_, kY_, kZ_] = (echarge/(2*\[Pi]*M*\[CapitalOmega]))*Sqrt[D[c1^2*Tr1ESQ150umRF[kX, kY, kZ], {kZ, 2}]*(c1^2) ];
+  
+  Tr1ftot150umRF[kX_, kY_, kZ_] = \[Sqrt]((Tr1fX150umRF[kX, kY, kZ])^2 + (Tr1fY150umRF[kX, kY, kZ])^2 + (Tr1fZ150umRF[kX, kY, kZ])^2);
+
+(*=========================================*)
+(*--------------  The Trapping frequencies drived from the total potential: trap #1*)
+  Tr1fX150umDCRF[kX_, kY_, kZ_] = (echarge /(2*\[Pi]*M*\[CapitalOmega]))*Sqrt[D[c1^2*Tr1ESQ150umRF[kX, kY, kZ], {kX, 2}]*c1^2] + (1 /(2*\[Pi]))*Sqrt[(echarge /M)*c1^2*D[Tr1Utot150um[kX, kY, kZ], {kX, 2}]];
+  Tr1fY150umDCRF[kX_, kY_, kZ_] = (echarge /(2*\[Pi]*M*\[CapitalOmega]))*Sqrt[D[c1^2*Tr1ESQ150umRF[kX, kY, kZ], {kY, 2}]*c1^2] +(1 /(2*\[Pi]))*Sqrt[(echarge /M)*c1^2*D[Tr1Utot150um[kX, kY, kZ], {kY, 2}]];
+  Tr1fZ150umDCRF[kX_, kY_, kZ_] = (echarge /(2*\[Pi]*M*\[CapitalOmega]))*Sqrt[D[c1^2*Tr1ESQ150umRF[kX, kY, kZ], {kZ, 2}]*c1^2] +(1 /(2*\[Pi]))*Sqrt[(echarge /M)*c1^2*D[Tr1Utot150um[kX, kY, kZ], {kZ, 2}]];
+
+  Tr1ftot150umDCRF[kX_, kY_, kZ_] = \[Sqrt]((Tr1fX150umDCRF[kX, kY, kZ])^2 + (Tr1fY150umDCRF[kX, kY, kZ])^2 + (Tr1fZ150umDCRF[kX, kY, kZ])^2);
+
+
+(*///////////////////////////////////////////////////////////////////////*)
