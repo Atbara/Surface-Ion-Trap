@@ -1,0 +1,218 @@
+(*This code is just to visualize the trap structure, it only requires the solid angle*)
+
+(*Begin["`Private`"];
+Unprotect["`*"];
+ClearAll["`*"];*)
+ClearAll[x1, x2, y1, y2];
+RFLength = 150;
+gap = 10;
+x1 = 70; 
+x2 = x1 + RFLength; (*Trap dimensions for 150\[Mu]m*)
+y1 = 70; 
+y2 = y1 + RFLength;
+
+Vvisu = 50;
+Tr1U150umRF[kX_, kY_, kZ_] = (Vvisu /(2*\[Pi])) (
+    (SolAngle[x1, x2, y1, y2, kX, kY, kZ]) -
+    (SolAngle[x1, x2, -y1, -y2, kX, kY, kZ]) +
+    (SolAngle[-x1, -x2, -y1, -y2, kX, kY, kZ]) -
+    (SolAngle[-x1, -x2, y1, y2, kX, kY, kZ]));
+RFLength = 150;
+x1 = 70; 
+x2 = x1 + RFLength; (*Trap dimensions for 150\[Mu]m*)
+y1 = 70; 
+y2 = y1 + RFLength;
+Tr1U150umDC[kX_, kY_, kZ_] = (Vvisu/(4*\[Pi])) (
+     (SolAngle[x1DCUpATr1, x2DCUpATr1, y1DCUpATr1, y2DCUpATr1, kX, kY,kZ]) +
+     (SolAngle[x1DCUpBTr1, x2DCUpBTr1, y1DCUpBTr1, y2DCUpBTr1, kX, kY,kZ]) +
+     ((SolAngle[x1DCRitAxeTr1, x2DCRitAxeTr1, y1DCRitAxeTr1, y2DCRitAxeTr1, kX, kY, kZ]) +
+      (SolAngle[x1DCRitAxeCnctTr1, x2DCRitAxeCnctTr1, y1DCRitAxeCnctTr1, y2DCRitAxeCnctTr1, kX, kY, kZ])) +
+     (SolAngle[x1DCRitTr1, x2DCRitTr1, y1DCRitTr1, y2DCRitTr1, kX, kY, kZ]) -
+     (SolAngle[x1DCDwnATr1, x2DCDwnATr1, y1DCDwnATr1, y2DCDwnATr1, kX, kY, kZ]) +
+     (SolAngle[x1DCDwnBTr1, x2DCDwnBTr1, y1DCDwnBTr1, y2DCDwnBTr1, kX, kY, kZ]) +
+     ((SolAngle[x1DCLftAxeTr1, x2DCLftAxeTr1, y1DCLftAxeTr1, y2DCLftAxeTr1, kX, kY, kZ]) + (SolAngle[x1DCLftAxeCnctTr1, x2DCLftAxeCnctTr1, y1DCLftAxeCnctTr1, y2DCLftAxeCnctTr1, kX, kY, kZ])) +
+     (SolAngle[x1DCLftTr1, x2DCLftTr1, y1DCLftTr1, y2DCLftTr1, kX, kY, kZ]) +
+     (SolAngle[x1DCCntrTr1, x2DCCntrTr1, y1DCCntrTr1, y2DCCntrTr1, kX, kY, kZ]) -
+     (*(Vvisu/100)*)(SolAngle[x1FWire, x2FWire, y1FWire, y2FWire, kX, kY, kZ]));
+
+
+(*--------------------Visualizing traps:-Trap #2*)
+
+ClearAll[x1, x2, y1, y2];
+(*Remember: FWireLength = 500;*)
+RFLength = 150;
+x1 = 70; 
+x2 = x1 + RFLength; (*Trap dimensions for 150\[Mu]m*)
+
+FWireLength = 500;
+y1 = -FWireLength + gap;  (*y1 coordinates of trap #2 starts at where the wire ends*)
+
+y2 = y1 + RFLength;
+(*--------------------- Trap #2 RF*)
+
+Tr2U150umRFA[kX_, kY_, kZ_] = (Vvisu /(2*\[Pi])) (
+    (SolAngle[x1, x2, y1, y2, kX, kY, kZ]) -
+    (SolAngle[-x1, -x2, y1, y2, kX, kY, kZ]));
+
+ClearAll[y1, y2];
+BiloSize = 120; (* The size of the pickup electrode*)
+
+y1 = -( FWireLength + BiloSize + gap);
+y2 = y1 - RFLength;
+Tr2U150umRFB[kX_, kY_, kZ_] = (Vvisu /(2*\[Pi])) (-
+    (SolAngle[x1, x2, y1, y2, kX, kY, kZ]) +
+    (SolAngle[-x1, -x2, y1, y2, kX, kY, kZ]));
+
+Tr2U150umRF[kX_, kY_, kZ_] = Tr2U150umRFA[kX, kY, kZ] + Tr2U150umRFB[kX, kY, kZ];
+
+(*----Coordinates of the center DC-electrod: trap #1*)
+
+
+x1DCCntr = -x1 + gap ; (*x-axis*)
+x2DCCntr = x1 - gap;
+
+y1DCCntr = y1 + gap;
+y2DCCntr = y1DCCntr + BiloSize (*y1+Abs[2*x1]*)
+(*-------------*)
+
+Tr2U150umDCIonPilow[kX_, kY_, kZ_] = (Vvisu /(4*\[Pi])) ((SolAngle[x1DCCntr, x2DCCntr, y1DCCntr, y2DCCntr, kX, kY, kZ]));
+(*Coordinates of the Right side DC-electrod: trap #1 *)
+AxeLength = 50;
+x1DCRitAxe = x1;  
+x2DCRitAxe = x1 + AxeLength;
+y1DCRitAxe = y1DCCntr; 
+y2DCRitAxe = y2DCCntr;
+
+AxeCnctWidth = 10;
+x1DCRitAxeCnct = x2DCRitAxe;  
+x2DCRitAxeCnct = x2;
+
+y1DCRitAxeCnct = y1DCCntr;(* y1+gap;*)
+
+y2DCRitAxeCnct = y1DCRitAxeCnct + AxeCnctWidth; 
+
+Axegap = 5; (*----------- Axe DC electrod support: trap #1 *)
+
+x1DCRit = x2DCRitAxe + Axegap;  
+x2DCRit = x2;
+
+y1DCRit = y2DCRitAxeCnct + Axegap ;
+y2DCRit = y2DCRitAxe(*+Abs[2*x1]*);
+(*-------------*)
+
+Tr2U150umDCRit[kX_, kY_, kZ_] = (Vvisu /(4*\[Pi])) (
+    ((SolAngle[x1DCRitAxe, x2DCRitAxe, y1DCRitAxe, y2DCRitAxe, kX, kY, kZ]) +
+     (SolAngle[x1DCRitAxeCnct, x2DCRitAxeCnct, y1DCRitAxeCnct, y2DCRitAxeCnct, kX, kY, kZ])) +
+    (SolAngle[x1DCRit, x2DCRit, y1DCRit, y2DCRit, kX, kY, kZ]));
+
+
+(*Coordinates of the Down side DC-electrod: trap #2 *)
+x1DCUpA = -x1 + gap;  x2DCUpA = -(gap/2);(*x-axis*)
+y1DCUpA = y1;
+y2DCUpA = y2;(*y-axis*)
+
+x1DCUpB = gap/2;  x2DCUpB = x1 - gap;
+y1DCUpB = y1;  y2DCUpB = y2;
+(*-------------*)
+
+Tr2U150umDCUp[kX_, kY_, kZ_] = (-Vvisu /(4*\[Pi])) (
+     (SolAngle[x1DCUpA, x2DCUpA, y1DCUpA, y2DCUpA, kX, kY, kZ]) +
+     (SolAngle[x1DCUpB, x2DCUpB, y1DCUpB, y2DCUpB, kX, kY, kZ]));
+
+
+(*Coordinates of the Left side DC-electrod: trap #1 *)
+(*x1DCLft =-x1DCRit ;
+x2DCLft = -x2DCRit;
+
+y1DCLft = y1DCRit;
+y2DCLft = y2DCRit;*)
+AxeLength = 50;
+x1DCRitAxe = x1;  
+x2DCRitAxe = x1 + AxeLength;
+y1DCRitAxe = y1DCCntr; 
+y2DCRitAxe = y2DCCntr;
+
+AxeCnctWidth = 10;
+x1DCRitAxeCnct = x2DCRitAxe;  
+x2DCRitAxeCnct = x2;
+
+y1DCRitAxeCnct = y1DCCntr;(* y1+gap;*)
+
+y2DCRitAxeCnct = y1DCRitAxeCnct + AxeCnctWidth; 
+
+Axegap = 5; (*----------- Axe DC electrod support: trap #1 *)
+
+x1DCRit = x2DCRitAxe + Axegap;  
+x2DCRit = x2;
+
+y1DCRit = y2DCRitAxeCnct + Axegap ;
+y2DCRit = y2DCRitAxe(*+Abs[2*x1]*);
+(*-------------*)
+(*Coordinates of the Right side DC-electrod: trap #1 *)
+
+x1DCLftAxe = -x1;  
+x2DCLftAxe = -(x1 + AxeLength);
+y1DCLftAxe = y1DCCntr;  
+y2DCLftAxe = y2DCCntr;
+
+x1DCLftAxeCnct = -x2DCRitAxe;
+x2DCLftAxeCnct = -x2;
+
+y1DCLftAxeCnct =  y2DCLftAxe - AxeCnctWidth; 
+y2DCLftAxeCnct = y2DCLftAxe;
+
+			(*----------- Axe DC electrod support: trap #1 *)
+
+x1DCLft = -x1DCRit;  
+x2DCLft = -x2DCRit ;
+y1DCLft = y1DCLftAxe; 
+y2DCLft =  y1DCLftAxeCnct - Axegap;
+(*-------------*)
+Tr2U150umDCLft[kX_, kY_, kZ_] = (-Vvisu /(4*\[Pi])) (
+    ((SolAngle[x1DCLftAxe, x2DCLftAxe, y1DCLftAxe, y2DCLftAxe, kX, kY, kZ]) +
+     (SolAngle[x1DCLftAxeCnct, x2DCLftAxeCnct, y1DCLftAxeCnct, y2DCLftAxeCnct, kX, kY, kZ])) +
+     (SolAngle[x1DCLft, x2DCLft, y1DCLft, y2DCLft, kX, kY, kZ]));
+
+(*Coordinates of the Upper side DC-electrod: trap #2 *)
+
+wirew = 5; (* The floating wire width*)
+
+x1DCDwnA = (wirew/2) + gap ;  
+x2DCDwnA = x2DCUpB ;(*x-axis*)
+y1DCDwnA = y2DCCntr + gap;
+y2DCDwnA = y1DCDwnA + RFLength;(*y-axis*)
+
+x1DCDwnB = -((wirew/2) + gap);  
+x2DCDwnB = x1DCUpA;
+y1DCDwnB = y1DCDwnA;  
+y2DCDwnB = y2DCDwnA;
+(*-------------*)
+
+Tr2U150umDCDwn[kX_, kY_, kZ_] = (Vvisu /(4*\[Pi])) (
+    SolAngle[x1DCDwnA, x2DCDwnA, y1DCDwnA, y2DCDwnA, kX, kY, kZ] -
+    SolAngle[x1DCDwnB, x2DCDwnB, y1DCDwnB, y2DCDwnB, kX, kY, kZ]);
+
+(*------ Creating ground electrodes between the two traps*)
+(*--- Right side ground electrode*)
+x1GNDRit = x1DCDwnA;  
+x2GNDRit = x2 ;(*x-axis*)
+y1GNDRit = y2DCDwnA + gap;
+y2GNDRit = -((BiloSize/2) + 2*gap + RFLength);(*y-axis*)
+
+(*--- Right side ground electrode*)
+x1GNDLft = -x1DCDwnA;  
+x2GNDLft = -x2 ;(*x-axis*)
+y1GNDLft = y2DCDwnA + gap;
+y2GNDLft = -((BiloSize/2) + 2*gap + RFLength);
+(*y2DCUpA + gap;*)(*y-axis*)
+
+TrapGND[kX_, kY_, kZ_] = (Vvisu /(4*\[Pi])) (
+    SolAngle[x1GNDRit, x2GNDRit, y1GNDRit , y2GNDRit , kX, kY, kZ] -
+    SolAngle[x1GNDLft , x2GNDLft , y1GNDLft, y2GNDLft, kX, kY, kZ]);
+
+
+Tr2U150umDC[kX_, kY_, kZ_] = Tr2U150umDCIonPilow[kX, kY, kZ] + Tr2U150umDCRit[kX, kY, kZ] + Tr2U150umDCUp[kX, kY, kZ] + Tr2U150umDCLft[kX, kY, kZ] + Tr2U150umDCDwn[kX, kY, kZ] + TrapGND[kX, kY, kZ];
+
+Tr1Struct150umDCRF[kX_, kY_, kZ_] = Tr1U150umRF[kX, kY, kZ] + Tr2U150umRF[kX, kY, kZ] + Tr1U150umDC[kX, kY, kZ] + Tr2U150umDC[kX, kY, kZ];
+
+
