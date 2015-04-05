@@ -1,0 +1,28 @@
+(* Excute Trap-Visual-Solid first*)
+
+DensityPlot[
+  Tr1Struct150umDCRF[kx, ky, 1], 
+  {kx, -400, 400}, {ky, -810, 250}, 
+  Frame -> True, 
+  FrameLabel -> {"x(\[Mu]m)", "y(\[Mu]m)"}, 
+  BaseStyle -> {FontSize -> 30}, 
+  PlotPoints -> 90, 
+  MaxRecursion -> 4, 
+  ClippingStyle -> Automatic, 
+  ColorFunction -> "SunsetColors", 
+  ImageSize -> {500, 500}, 
+  PlotLabel -> "Structure(120\[Mu]m)"]
+
+(* To visualize the electric fields*)
+
+DensityPlot[
+  Tr1U150umRF[kx, ky, 1] + Tr2U150umRF[kx, ky, 1] + Tr1U150umDC[kx, ky, 1] + Tr2U150umDC[kx, ky, 1] + TrapGNDs[kx, ky, 1], {kx, -400, 400}, {ky, -850, 250}, 
+  Frame -> True, 
+  FrameLabel -> {"x(\[Mu]m)", "y(\[Mu]m)"}, 
+   BaseStyle -> {FontSize -> 30}, 
+   PlotPoints -> 90, 
+   MaxRecursion -> 4, 
+  ClippingStyle -> Automatic, 
+  ColorFunction -> "SunsetColors", 
+  ImageSize -> {500, 500}, 
+  PlotLabel -> "Structure(120\[Mu]m)"]
