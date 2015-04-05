@@ -1,4 +1,5 @@
 (*Calculating the potential, electirc fields and the trapping frequencies for trap #1 *)
+(*Must excute the solid angle code first*)
 
 (*------------- Rf-electrods inputs [Volt]: Trap #1*)
   Vrf   = 70;
@@ -32,7 +33,7 @@ x2 = x1 + RFLength; (*Trap dimensions for 150\[Mu]m*)
 y1 = 70; 
 y2 = y1 + RFLength;
 Tr1U150umRF[kX_, kY_, kZ_] = (1/(2 \[Pi])) (
-    (Vlt1)*(SolAngle[x1, x2, y1, y2, kX, kY, kZ]) -
+     (Vlt1)*(SolAngle[x1, x2, y1, y2, kX, kY, kZ]) -
      (Vlt2)*(SolAngle[x1, x2, -y1, -y2, kX, kY, kZ]) +
      (Vlt3)*(SolAngle[-x1, -x2, -y1, -y2, kX, kY, kZ]) -
      (Vlt4)*(SolAngle[-x1, -x2, y1, y2, kX, kY, kZ]));
@@ -116,9 +117,9 @@ gap = 10;
 
   wirew = 5; (* The floating wire width*)
   x1DCDwnATr1 = (wirew/2) + gap ;  
-  x2DCDwnATr1 = x2DCUpBTr1;(*x-axis*)
+  x2DCDwnATr1 = x2DCUpBTr1;   (*x-axis*)
   y1DCDwnATr1 = -y1DCUpATr1;  
-  y2DCDwnATr1 = -y2DCUpATr1;(*y-axis*)
+  y2DCDwnATr1 = -y2DCUpATr1;  (*y-axis*)
 
   x1DCDwnBTr1 = -((wirew/2) + gap);  
   x2DCDwnBTr1 = x1DCUpATr1;
@@ -146,7 +147,7 @@ gap = 10;
   y1DCLftAxeCnctTr1 = -y1DCRitAxeCnctTr1; 
   y2DCLftAxeCnctTr1 = -y2DCRitAxeCnctTr1 ;
 
-			(*----------- Axe DC electrod support: trap #1 *)
+(*----------- Axe DC electrod support: trap #1 *)
 
   x1DCLftTr1 = -x1DCRitTr1;  
   x2DCLftTr1 = -x2DCRitTr1;
@@ -189,8 +190,8 @@ Tr1EZ150umtot[kX_, kY_, kZ_] = Tr1EZ150umDC[kX, kY, kZ] + Tr1EZ150umRF[kX, kY, k
 Tr1ESQ150umtot[kX_, kY_, kZ_] = (Tr1EX150umtot[kX, kY, kZ])^2 +c(Tr1EY150umtot[kX, kY, kZ])^2 +c(Tr1EZ150umtot[kX, kY, kZ])^2; 
 
 (*==========================================*)
-(*---------------- Calculate the total potnetial trap #1: Overscript[U, \[RightVector]](r) = Subscript[U, srf](r)+Subscript[U, sdc](r)\[Rule] Rf(150\[Mu]m)*)
 
+(*---------------- Calculate the total potnetial trap #1: Overscript[U, \[RightVector]](r) = Subscript[U, srf](r)+Subscript[U, sdc](r)\[Rule] Rf(150\[Mu]m)*)
 (*--------------- Trap electric pseudopotential*)
   M = 40*1.67262178*10^-27; (*1.67262178*10^-27 is the mass of the proton*)
   echarge = 1.6*10^-19;
@@ -198,11 +199,10 @@ Tr1ESQ150umtot[kX_, kY_, kZ_] = (Tr1EX150umtot[kX, kY, kZ])^2 +c(Tr1EY150umtot[k
   c1 = 10^6;(*converting unit from \[Mu]m to m*)
   Tr1Upsd150umRF[kX_, kY_, kZ_] = (1/(M*echarge ))*(echarge/(2*\[CapitalOmega]))^2*c1^2* Tr1ESQ150umRF[kX, kY, kZ];
   
-(*---------------- Calculate the total potnetial: Overscript[U, \
-\[RightVector]](r) = Subscript[U, srf](r)+Subscript[U, sdc](r)\[Rule] Rf(75\[Mu]m)*)
+(*---------------- Calculate the total potnetial: Overscript[U, \[RightVector]](r) = Subscript[U, srf](r)+Subscript[U, sdc](r)\[Rule] Rf(75\[Mu]m)*)
 Tr1Utot150um[kX_, kY_, kZ_] = Tr1Upsd150umRF[kX, kY, kZ] + Tr1U150umDC[kX, kY, kZ];
 
-(*========================================*)
+
 (*----------------The Trapping frequencies for trap #1*)
 (*--------------  The Trapping frequencies for the RF electrodes*)
 
